@@ -1,0 +1,272 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * Copyright 2011 Paranoid Ferret Productions
+<span class='line'>  3</span>  * 
+<span class='line'>  4</span>  * Animations are a collection of rectangles that represent pieces of
+<span class='line'>  5</span>  * a larger rectangle, which change at a given rate, IE the frame
+<span class='line'>  6</span>  * changes at a given interval.
+<span class='line'>  7</span>  * @param {object} params parameters that can be set as initialized options
+<span class='line'>  8</span>  * on the node
+<span class='line'>  9</span>  * @config {PFPlay.Sprite} target the sprite for the action to be performed on
+<span class='line'> 10</span>  * @config {string} [name] name of the node
+<span class='line'> 11</span>  * @config {object} [size] a point object that represents the size of the 
+<span class='line'> 12</span>  * animation frames
+<span class='line'> 13</span>  * @config {number|array} [frames] a number representing the number of frames
+<span class='line'> 14</span>  * or an array of frames representing the sequence in which to play the
+<span class='line'> 15</span>  * frames
+<span class='line'> 16</span>  * @config {number} [frameRate] the number of frames per second
+<span class='line'> 17</span>  * @config {point} [offset] the pixel offset of the animation in respect to the 
+<span class='line'> 18</span>  * sprite sheet
+<span class='line'> 19</span>  * @config {size} [bounds] the phyiscal bounds in which all frames must lie
+<span class='line'> 20</span>  * @config {number} [plays] the number of times the animation should loop, if 
+<span class='line'> 21</span>  * less than 0 it will loop continuously
+<span class='line'> 22</span>  * @author Richard Key
+<span class='line'> 23</span>  * @class animation action
+<span class='line'> 24</span>  * @augments PFPlay.Action
+<span class='line'> 25</span>  */</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT"> 
+<span class='line'> 27</span> </span><span class="NAME">PFPlay.AnimateAction</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">PFPlay.Action.extend</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="COMM">/** @lends PFPlay.AnimateAction.prototype */</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">  </span><span class="COMM">/** @constructs */</span><span class="WHIT"> 
+<span class='line'> 31</span>   </span><span class="NAME">init</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 32</span> 
+<span class='line'> 33</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 34</span> 
+<span class='line'> 35</span> </span><span class="WHIT">    </span><span class="COMM">// Check the params </span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">    </span><span class="NAME">params</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">PFPlay.util.checkParams</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.name</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">      </span><span class="NAME">size</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">width</span><span class="PUNC">:</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">height</span><span class="PUNC">:</span><span class="NUMB">0</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">      </span><span class="NAME">frames</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">      </span><span class="NAME">frameRate</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">      </span><span class="NAME">offset</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">x</span><span class="PUNC">:</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">:</span><span class="NUMB">0</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">      </span><span class="NAME">bounds</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">width</span><span class="PUNC">:</span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">height</span><span class="PUNC">:</span><span class="NUMB">1</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">      </span><span class="NAME">plays</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NUMB">1</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 46</span> 
+<span class='line'> 47</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 48</span>      * The size of the frame for the animation.
+<span class='line'> 49</span>      * @type {size}
+<span class='line'> 50</span>      */</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">    </span><span class="NAME">this.size</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params.size</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 52</span> 
+<span class='line'> 53</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 54</span>      * @private
+<span class='line'> 55</span>      * The original frame of the texture when started.
+<span class='line'> 56</span>      * @type {size}
+<span class='line'> 57</span>      */</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="NAME">this._private.frameOriginal</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">      </span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">      </span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> 
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 66</span>      * @private
+<span class='line'> 67</span>      * The bounds in which all frames must lie.
+<span class='line'> 68</span>      * @type {size}
+<span class='line'> 69</span>      */</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">    </span><span class="NAME">this._private.bounds</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params.bounds</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> 
+<span class='line'> 72</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 73</span>      * @private
+<span class='line'> 74</span>      * The number of frames in the sequence.
+<span class='line'> 75</span>      * @type {number}
+<span class='line'> 76</span>      */</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">    </span><span class="NAME">this._private.frames</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params.frames</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 78</span> 
+<span class='line'> 79</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 80</span>      * @private
+<span class='line'> 81</span>      * The frame rate that the animation should play at.
+<span class='line'> 82</span>      * @type {number}
+<span class='line'> 83</span>      */</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">    </span><span class="NAME">this._private.frameRate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params.frameRate</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 85</span> 
+<span class='line'> 86</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 87</span>      * @private
+<span class='line'> 88</span>      * The pixel offset for the frames on the original image.
+<span class='line'> 89</span>      * @type {point}
+<span class='line'> 90</span>      */</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">    </span><span class="NAME">this._private.offset</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params.offset</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 92</span> 
+<span class='line'> 93</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 94</span>      * @private
+<span class='line'> 95</span>      * The number of play throughs if it's equal to less than one it loops.
+<span class='line'> 96</span>      * @type {number}
+<span class='line'> 97</span>      */</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">    </span><span class="NAME">this._private.plays</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params.plays</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 99</span> 
+<span class='line'>100</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>101</span>      * @private
+<span class='line'>102</span>      * The current play through number.
+<span class='line'>103</span>      * @type {number}
+<span class='line'>104</span>      */</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">    </span><span class="NAME">this._private.currentPlay</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>106</span> 
+<span class='line'>107</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>108</span>      * @private
+<span class='line'>109</span>      * The current frame of the animation. Zero indexed.
+<span class='line'>110</span>      * @type {number}
+<span class='line'>111</span>      */</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">    </span><span class="NAME">this._private.currentFrame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>113</span> 
+<span class='line'>114</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>115</span>      * @private
+<span class='line'>116</span>      * The start time for the animation.
+<span class='line'>117</span>      * @type {number}
+<span class='line'>118</span>      */</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">    </span><span class="NAME">this._private.start</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>120</span> 
+<span class='line'>121</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>122</span>      * @private
+<span class='line'>123</span>      * The current play time of the animation.
+<span class='line'>124</span>      * @type {number}
+<span class='line'>125</span>      */</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">    </span><span class="NAME">this._private.playTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>128</span> 
+<span class='line'>129</span> </span><span class="WHIT">  </span><span class="COMM">/** 
+<span class='line'>130</span>    * Gets or Sets the current outer bounds for the animation. The bounds
+<span class='line'>131</span>    * determine when to wrap frames to the next "line." Frames will always be
+<span class='line'>132</span>    * forced to lie without the set bounds.
+<span class='line'>133</span>    * @param {object} newBounds the new bounds of the animation
+<span class='line'>134</span>    * @return {object} the current bounds of the animation 
+<span class='line'>135</span>    */</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">  </span><span class="NAME">bounds</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">newBounds</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">newBounds</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">newBounds</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">      </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this._private.bounds</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">  
+<span class='line'>141</span>     </span><span class="COMM">/** Bounds have to be greater than 0 to prevent an infinite loop
+<span class='line'>142</span>      * when checking for positions outside them. */</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">newBounds.x</span><span class="WHIT"> </span><span class="PUNC">&lt;=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">      </span><span class="NAME">newBounds.x</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">    
+<span class='line'>146</span>     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">newBounds.y</span><span class="WHIT"> </span><span class="PUNC">&lt;=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">      </span><span class="NAME">newBounds.y</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">      
+<span class='line'>149</span>     </span><span class="NAME">this._private.bounds</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">newBounds</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>151</span> 
+<span class='line'>152</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>153</span>    * Gets a frame of the animation based on the passed in index or
+<span class='line'>154</span>    * the current frame.
+<span class='line'>155</span>    * @param {number} index the frame to retrieve
+<span class='line'>156</span>    * @return {object} a rectangle that represents the frame
+<span class='line'>157</span>    */</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="WHIT">  </span><span class="NAME">getFrame</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">index</span><span class="PUNC">)</span><span class="WHIT"> 
+<span class='line'>159</span>   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">frame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">PFPlay.util.checkValue</span><span class="PUNC">(</span><span class="NAME">index</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this._private.currentFrame</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">    
+<span class='line'>162</span>     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this._private.frames</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">      </span><span class="NAME">frame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this._private.frames</span><span class="PUNC">[</span><span class="NAME">this._private.currentFrame</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">    
+<span class='line'>166</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">frame</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this._private.offset.x</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.size.width</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this._private.offset.y</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">    
+<span class='line'>169</span>     </span><span class="COMM">/** If the x position is out of bounds, move the frame selection
+<span class='line'>170</span>      * down. */</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">    </span><span class="KEYW">while</span><span class="PUNC">(</span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NAME">this._private.bounds.x</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">this._private.bounds.x</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">      
+<span class='line'>177</span>     </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.size.height</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">    
+<span class='line'>179</span>     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NAME">this._private.bounds.y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>180</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this._private.bounds.y</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">this.size.height</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>182</span> </span><span class="WHIT">    
+<span class='line'>183</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">x</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">width</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.size.width</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">height</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.size.height</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>185</span> 
+<span class='line'>186</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>187</span>    * Starts the animation.
+<span class='line'>188</span>    */</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">  </span><span class="NAME">start</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="WHIT">    </span><span class="NAME">this._private.currentPlay</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="WHIT">    </span><span class="NAME">this._private.frameOriginal</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.target.textureFrame</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>194</span> 
+<span class='line'>195</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>196</span>    * Pauses the animation.
+<span class='line'>197</span>    */</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="WHIT">  </span><span class="NAME">pause</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>200</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>201</span> 
+<span class='line'>202</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>203</span>    * Stops the animation.
+<span class='line'>204</span>    */</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">  </span><span class="NAME">stop</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">    </span><span class="NAME">this._private.currentFrame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">    </span><span class="NAME">this._private.playTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>210</span> 
+<span class='line'>211</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>212</span>    * Complete handler when the animation is complete.
+<span class='line'>213</span>    */</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">  </span><span class="NAME">complete</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="WHIT">    </span><span class="NAME">this.target.textureFrame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this._private.frameOriginal</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>218</span> 
+<span class='line'>219</span> </span><span class="WHIT">  </span><span class="COMM">/** 
+<span class='line'>220</span>    * This is the master update function for the animation. This will 
+<span class='line'>221</span>    * update the target's texture with the correct frame.
+<span class='line'>222</span>    * @param {number} elapsed the elapsed time since last update call in 
+<span class='line'>223</span>    * milliseconds 
+<span class='line'>224</span>    */</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="WHIT">  </span><span class="NAME">update</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">elapsed</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> 
+<span class='line'>229</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.running</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="WHIT">      </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>233</span> 
+<span class='line'>234</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>235</span> 
+<span class='line'>236</span> </span><span class="WHIT">    </span><span class="NAME">this._private.playTime</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">elapsed</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">    
+<span class='line'>238</span>     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this._private.playTime</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NUMB">1</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">this._private.frameRate</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NUMB">1000</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">      </span><span class="NAME">this._private.currentFrame</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">      
+<span class='line'>242</span>       </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">length</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this._private.frames.length</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">this._private.frames</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>243</span> 
+<span class='line'>244</span> </span><span class="WHIT">      </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this._private.currentFrame</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NAME">length</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="WHIT">        </span><span class="NAME">this._private.currentFrame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>246</span> </span><span class="WHIT">        </span><span class="NAME">this._private.currentPlay</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this._private.plays</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> 
+<span class='line'>248</span>            </span><span class="NAME">this._private.currentPlay</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">this._private.plays</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">          </span><span class="NAME">this.stop</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="WHIT">          </span><span class="NAME">this.complete</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>251</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="WHIT">      </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="WHIT">      
+<span class='line'>254</span>       </span><span class="NAME">this._private.playTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>255</span> </span><span class="WHIT">      </span><span class="NAME">updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>257</span> 
+<span class='line'>258</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">updated</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="WHIT">      </span><span class="COMM">// update the targets texture</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="WHIT">      </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">frame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.getFrame</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">      </span><span class="NAME">this.target.textureFrame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">frame</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>262</span> </span><span class="WHIT">      </span><span class="NAME">this.target.updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>263</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

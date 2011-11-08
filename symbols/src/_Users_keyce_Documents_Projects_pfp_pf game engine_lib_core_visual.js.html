@@ -1,0 +1,479 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * Copyright 2011 Paranoid Ferret Productions
+<span class='line'>  3</span>  *
+<span class='line'>  4</span>  * The base type for all visual elements added to the world.
+<span class='line'>  5</span>  * @param {object} [params] parameters that can be set as initialized options
+<span class='line'>  6</span>  * on the node
+<span class='line'>  7</span>  * @config {string} [name] name of the node
+<span class='line'>  8</span>  * @author Charlie Key
+<span class='line'>  9</span>  * @class visual node
+<span class='line'> 10</span>  * @augments PFPlay.Node
+<span class='line'> 11</span>  */</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="WHIT"> 
+<span class='line'> 13</span> </span><span class="NAME">PFPlay.Visual</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">PFPlay.Node.extend</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="COMM">/** @lends PFPlay.Visual.prototype */</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="WHIT">  </span><span class="COMM">/** @constructs */</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">  </span><span class="NAME">init</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> 
+<span class='line'> 20</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 21</span>      * The html canvas element that represents this visual node.
+<span class='line'> 22</span>      * @type {HTMLCanvas}
+<span class='line'> 23</span>      */</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="NAME">this.canvas</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">document.createElement</span><span class="PUNC">(</span><span class="STRN">'canvas'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> 
+<span class='line'> 26</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 27</span>      * 2d context for the canvas element for this visual node.
+<span class='line'> 28</span>      * @type {CanvasRenderingContext2D}
+<span class='line'> 29</span>      */</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">    </span><span class="NAME">this._private.context</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.canvas.getContext</span><span class="PUNC">(</span><span class="STRN">'2d'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 31</span> 
+<span class='line'> 32</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 33</span>      * Signifies it's the first update for the visual node.
+<span class='line'> 34</span>      * @type {boolean}
+<span class='line'> 35</span>      */</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">    </span><span class="NAME">this._private.firstUpdate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span> 
+<span class='line'> 38</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 39</span>      * The current position of the visual node.
+<span class='line'> 40</span>      * @type {point}
+<span class='line'> 41</span>      */</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">    </span><span class="NAME">this.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
+<span class='line'> 43</span>       </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'> 44</span>       </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 46</span> 
+<span class='line'> 47</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 48</span>      * The previous position of the visual node, previous position gets
+<span class='line'> 49</span>      * updated in the update function.
+<span class='line'> 50</span>      * @type {point}
+<span class='line'> 51</span>      */</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="NAME">this.positionPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> 
+<span class='line'> 57</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 58</span>      * The current size of the visual node.
+<span class='line'> 59</span>      * @type {size}
+<span class='line'> 60</span>      */</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="NAME">this.size</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">      </span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">      </span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 65</span> 
+<span class='line'> 66</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 67</span>      * The previous size of the visual node, previous size gets
+<span class='line'> 68</span>      * updated in the update function.
+<span class='line'> 69</span>      * @type {size}
+<span class='line'> 70</span>      */</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">    </span><span class="NAME">this.sizePrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">      </span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">      </span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 75</span> 
+<span class='line'> 76</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 77</span>      * The bounds of this visual node, updated based on size and position.
+<span class='line'> 78</span>      * @type {rect}
+<span class='line'> 79</span>      */</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">    </span><span class="NAME">this.bounds</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">      </span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">      </span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 86</span> 
+<span class='line'> 87</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 88</span>      * The previous bounds of this visual node.
+<span class='line'> 89</span>      * @type {rect}
+<span class='line'> 90</span>      */</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">    </span><span class="NAME">this.boundsPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">      </span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">      </span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 97</span> 
+<span class='line'> 98</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 99</span>      * The current position anchor of the visual node, the position on the 
+<span class='line'>100</span>      * visual node sets the position of the anchor.
+<span class='line'>101</span>      * @type {point}
+<span class='line'>102</span>      */</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">    </span><span class="NAME">this.anchor</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0.5</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0.5</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>107</span> 
+<span class='line'>108</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>109</span>      * The previous position anchor of the visual node, previous anchor gets 
+<span class='line'>110</span>      * updated in the update function.
+<span class='line'>111</span>      * @type {point}
+<span class='line'>112</span>      */</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">    </span><span class="NAME">this.anchorPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0.5</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0.5</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>117</span> 
+<span class='line'>118</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>119</span>      * The radius from the center of the visual node to the anchor point.
+<span class='line'>120</span>      * @type {float}
+<span class='line'>121</span>      */</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">    </span><span class="NAME">this.anchorRadius</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> 
+<span class='line'>124</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>125</span>      * The angle of the anchor to the center of the visual node in degrees.
+<span class='line'>126</span>      * @type {float}
+<span class='line'>127</span>      */</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">    </span><span class="NAME">this.anchorAngle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>129</span> 
+<span class='line'>130</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'>131</span>      * The current scale of the visual node.
+<span class='line'>132</span>      * @type {point}
+<span class='line'>133</span>      */</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">    </span><span class="NAME">this.scale</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1.0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1.0</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>138</span> 
+<span class='line'>139</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'>140</span>      * The previous scale of the visual node, this is updated in the update
+<span class='line'>141</span>      * function.
+<span class='line'>142</span>      * @type {point}
+<span class='line'>143</span>      */</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">    </span><span class="NAME">this.scalePrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1.0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1.0</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>148</span> 
+<span class='line'>149</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>150</span>      * The rotation of the visual node, in degrees.
+<span class='line'>151</span>      * @type {number}
+<span class='line'>152</span>      */</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">    </span><span class="NAME">this.rotation</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> 
+<span class='line'>155</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>156</span>      * The previous rotation of the visual node, in degrees. This is updated in 
+<span class='line'>157</span>      * the update function.
+<span class='line'>158</span>      * @type {number}
+<span class='line'>159</span>      */</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">    </span><span class="NAME">this.rotationPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span> 
+<span class='line'>162</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>163</span>      * The position of the upper left of the visual node based on the 
+<span class='line'>164</span>      * position and anchor.
+<span class='line'>165</span>      * @type {point}
+<span class='line'>166</span>      */</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">    </span><span class="NAME">this.positionTopLeft</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>171</span> 
+<span class='line'>172</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>173</span>      * The previous position of the upper left of the visual node, previous
+<span class='line'>174</span>      * top left gets updated in update function.
+<span class='line'>175</span>      * @type {point}
+<span class='line'>176</span>      */</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">    </span><span class="NAME">this.positionTopLeftPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT">
+<span class='line'>180</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>181</span> 
+<span class='line'>182</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>183</span>      * This signifies whether the visual node needs to have certain size 
+<span class='line'>184</span>      * properties recalculated.
+<span class='line'>185</span>      * @type {boolean}
+<span class='line'>186</span>      */</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">    </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>188</span> 
+<span class='line'>189</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>190</span>      * The zindex of the visual node. Higher zindex means the visual object
+<span class='line'>191</span>      * is on top of lower zindex nodes.
+<span class='line'>192</span>      * @type {number}
+<span class='line'>193</span>      */</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">    </span><span class="NAME">this.zindex</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span> 
+<span class='line'>196</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>197</span>      * The previous zindex of the visual node. Higher zindex means the 
+<span class='line'>198</span>      * visual object is on top of lower zindex nodes.
+<span class='line'>199</span>      * @type {number}
+<span class='line'>200</span>      */</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="WHIT">    </span><span class="NAME">this.zindexPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>202</span> 
+<span class='line'>203</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>204</span>      * This signifies that the visual node has changed sort order.
+<span class='line'>205</span>      * @type {boolean}
+<span class='line'>206</span>      */</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">    </span><span class="NAME">this.shuffled</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> 
+<span class='line'>209</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>210</span>      * The alpha transparency of the visual from 0-100.
+<span class='line'>211</span>      * @type {number}
+<span class='line'>212</span>      */</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">    </span><span class="NAME">this.alpha</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">100</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> 
+<span class='line'>215</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>216</span>      * The previous alpha transparency of the visual from 0-100.
+<span class='line'>217</span>      * @type {number}
+<span class='line'>218</span>      */</span><span class="WHIT">
+<span class='line'>219</span> </span><span class="WHIT">    </span><span class="NAME">this.alphaPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">100</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>220</span> 
+<span class='line'>221</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>222</span>      * This signifies whether the visual node is visible at the time, if false
+<span class='line'>223</span>      * the node's draw function will not be called.
+<span class='line'>224</span>      * @type {boolean}
+<span class='line'>225</span>      */</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">    </span><span class="NAME">this.visible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>227</span> 
+<span class='line'>228</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>229</span>      * The previous state of visible, this value is updated in the 
+<span class='line'>230</span>      * update function.
+<span class='line'>231</span>      * @type {number}
+<span class='line'>232</span>      */</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">    </span><span class="NAME">this.visiblePrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>234</span> 
+<span class='line'>235</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>236</span>      * This signifies whether the object needs to be redrawn on next draw phase.
+<span class='line'>237</span>      * @type {boolean}
+<span class='line'>238</span>      */</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">    </span><span class="NAME">this.updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>241</span> 
+<span class='line'>242</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>243</span>    * Sets the previous position, used to clear the previous frame from
+<span class='line'>244</span>    * a layer.
+<span class='line'>245</span>    * @param {number} x the horizontal previous position of the sprite
+<span class='line'>246</span>    * @param (number) y the vertical  previous position of the sprite
+<span class='line'>247</span>    */</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">  </span><span class="NAME">setPreviousPosition</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">    </span><span class="NAME">this.positionPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>251</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">y</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>254</span> 
+<span class='line'>255</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>256</span>    * Moves the visual node by adding passed in parameters to the 
+<span class='line'>257</span>    * current position.
+<span class='line'>258</span>    * @param {number} x the value to add to the x position.
+<span class='line'>259</span>    * @param {number} y the value to add to the y position.
+<span class='line'>260</span>    */</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">  </span><span class="NAME">move</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>262</span> </span><span class="WHIT">    </span><span class="NAME">this.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>263</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.position.x</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.position.y</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">y</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>267</span> 
+<span class='line'>268</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>269</span>    * Updates visual node properities by checking to see if they have 
+<span class='line'>270</span>    * changed.
+<span class='line'>271</span>    * @param {number} elapsed time elapsed since last update call in 
+<span class='line'>272</span>    * milliseconds 
+<span class='line'>273</span>    */</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="WHIT">  </span><span class="NAME">update</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">elapsed</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">    </span><span class="COMM">// call the super update</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">    </span><span class="NAME">this._super</span><span class="PUNC">(</span><span class="NAME">elapsed</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>277</span> 
+<span class='line'>278</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this._private.firstUpdate</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>279</span> </span><span class="WHIT">      </span><span class="NAME">this._private.firstUpdate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>280</span> </span><span class="WHIT">      </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>281</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>282</span> 
+<span class='line'>283</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.position.x</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.positionPrevious.x</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">       </span><span class="NAME">this.position.y</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.positionPrevious.y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">      </span><span class="NAME">this.positionPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.position</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">      </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>287</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>288</span> 
+<span class='line'>289</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.size.width</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.sizePrevious.width</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT">
+<span class='line'>290</span> </span><span class="WHIT">       </span><span class="NAME">this.size.height</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.sizePrevious.height</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>291</span> </span><span class="WHIT">      </span><span class="NAME">this.sizePrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.size</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>292</span> </span><span class="WHIT">      </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>293</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>294</span> 
+<span class='line'>295</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.anchor.x</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.anchorPrevious.x</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT">
+<span class='line'>296</span> </span><span class="WHIT">       </span><span class="NAME">this.anchor.y</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.anchorPrevious.y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="WHIT">      </span><span class="NAME">this.anchorPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.anchor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>298</span> </span><span class="WHIT">      </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>300</span> 
+<span class='line'>301</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.scale.x</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.scalePrevious.x</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="WHIT">       </span><span class="NAME">this.scale.y</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.scalePrevious.y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>303</span> </span><span class="WHIT">      </span><span class="NAME">this.scalePrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.scale</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>304</span> </span><span class="WHIT">      </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>305</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>306</span> 
+<span class='line'>307</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.rotation</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.rotationPrevious</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="WHIT">      </span><span class="NAME">this.rotationPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.rotation</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="WHIT">      </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>311</span> 
+<span class='line'>312</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.zindex</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.zindexPrevious</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="WHIT">      </span><span class="NAME">this.zindexPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.zindex</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>314</span> </span><span class="WHIT">      </span><span class="NAME">this.shuffled</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="WHIT">      </span><span class="NAME">this.updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>317</span> 
+<span class='line'>318</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.alpha</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.alphaPrevious</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>319</span> </span><span class="WHIT">      </span><span class="NAME">this.alphaPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.alpha</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>320</span> </span><span class="WHIT">      </span><span class="NAME">this.updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>321</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>322</span> 
+<span class='line'>323</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.visible</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.visiblePrevious</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>324</span> </span><span class="WHIT">      </span><span class="NAME">this.visiblePrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.visible</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>325</span> </span><span class="WHIT">      </span><span class="NAME">this.updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>326</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>327</span> 
+<span class='line'>328</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.invalidProperties</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>329</span> </span><span class="WHIT">      </span><span class="NAME">this.calculateProperties</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>330</span> </span><span class="WHIT">      </span><span class="NAME">this.updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>331</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>333</span> 
+<span class='line'>334</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>335</span>    * Draws this visual node to passed in context. This is draw the canvas
+<span class='line'>336</span>    * for this visual node on the context applying rotation, scale, and
+<span class='line'>337</span>    * alpha.
+<span class='line'>338</span>    * @param {CanvasRenderingContext2D} ctx the context in which to draw 
+<span class='line'>339</span>    * visual on
+<span class='line'>340</span>    */</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="WHIT">  </span><span class="NAME">draw</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ctx</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">PFPlay.DEBUG</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="WHIT">      </span><span class="NAME">console.log</span><span class="PUNC">(</span><span class="STRN">'visual node draw'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>344</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>345</span> 
+<span class='line'>346</span> </span><span class="WHIT">    </span><span class="NAME">ctx.save</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>347</span> 
+<span class='line'>348</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">PFPlay.DEBUG</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="WHIT">      </span><span class="NAME">ctx.save</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>350</span> </span><span class="WHIT">      </span><span class="NAME">ctx.fillStyle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"#CCDE42"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>351</span> </span><span class="WHIT">      </span><span class="NAME">ctx.beginPath</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="WHIT">      </span><span class="NAME">ctx.arc</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>353</span> </span><span class="WHIT">        </span><span class="NAME">this.positionTopLeft.x</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.canvas.width</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>354</span>         </span><span class="NAME">this.positionTopLeft.y</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.canvas.height</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>355</span>         </span><span class="NUMB">3</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Math.PI</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT">
+<span class='line'>356</span> </span><span class="WHIT">      </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>357</span> </span><span class="WHIT">      </span><span class="NAME">ctx.closePath</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>358</span> </span><span class="WHIT">      </span><span class="NAME">ctx.fill</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>359</span> </span><span class="WHIT">      </span><span class="NAME">ctx.restore</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>360</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>361</span> 
+<span class='line'>362</span>     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">PFPlay.DEBUG</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>363</span> </span><span class="WHIT">      </span><span class="NAME">ctx.strokeStyle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"#0022FF"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>364</span> </span><span class="WHIT">      </span><span class="NAME">ctx.strokeRect</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="WHIT">        </span><span class="NAME">this.positionTopLeft.x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.positionTopLeft.y</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>366</span>         </span><span class="NAME">this.canvas.width</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.canvas.height</span><span class="WHIT">
+<span class='line'>367</span> </span><span class="WHIT">      </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>368</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>369</span> 
+<span class='line'>370</span> </span><span class="WHIT">    </span><span class="COMM">// apply the alpha for this visual node</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="WHIT">    </span><span class="NAME">ctx.globalAlpha</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.alpha</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">100</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>372</span> 
+<span class='line'>373</span> </span><span class="WHIT">    </span><span class="COMM">// apply the rotation if needed</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.rotation</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">      </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">rotationX</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.positionTopLeft.x</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> 
+<span class='line'>376</span>                       </span><span class="NAME">this.size.width</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.scale.x</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="WHIT">      </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">rotationY</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.positionTopLeft.y</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> 
+<span class='line'>378</span>                       </span><span class="NAME">this.size.height</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.scale.y</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>379</span> 
+<span class='line'>380</span> </span><span class="WHIT">      </span><span class="NAME">ctx.translate</span><span class="PUNC">(</span><span class="NAME">rotationX</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">rotationY</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>381</span> </span><span class="WHIT">      </span><span class="NAME">ctx.rotate</span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">Math.PI</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.rotation</span><span class="WHIT"> </span><span class="PUNC">%</span><span class="WHIT"> </span><span class="NUMB">360</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">180</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>382</span> </span><span class="WHIT">      </span><span class="NAME">ctx.translate</span><span class="PUNC">(</span><span class="PUNC">-</span><span class="NAME">rotationX</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NAME">rotationY</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>383</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>384</span> 
+<span class='line'>385</span> </span><span class="WHIT">    </span><span class="COMM">// apply the scale</span><span class="WHIT">
+<span class='line'>386</span> </span><span class="WHIT">    </span><span class="NAME">ctx.scale</span><span class="PUNC">(</span><span class="NAME">this.scale.x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.scale.y</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>387</span> 
+<span class='line'>388</span> </span><span class="WHIT">    </span><span class="COMM">// draw the canvas</span><span class="WHIT">
+<span class='line'>389</span> </span><span class="WHIT">    </span><span class="NAME">ctx.drawImage</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="WHIT">      </span><span class="NAME">this.canvas</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>391</span>       </span><span class="NAME">this.positionTopLeft.x</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">this.scale.x</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>392</span>       </span><span class="NAME">this.positionTopLeft.y</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">this.scale.y</span><span class="WHIT">
+<span class='line'>393</span> </span><span class="WHIT">    </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>394</span> 
+<span class='line'>395</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">PFPlay.DEBUG</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="WHIT">      </span><span class="NAME">ctx.strokeStyle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"#22FF33"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>397</span> </span><span class="WHIT">      </span><span class="NAME">ctx.strokeRect</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>398</span> </span><span class="WHIT">        </span><span class="NAME">this.positionTopLeft.x</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">this.scale.x</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>399</span>         </span><span class="NAME">this.positionTopLeft.y</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">this.scale.y</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>400</span> </span><span class="WHIT">        </span><span class="NAME">this.canvas.width</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>401</span>         </span><span class="NAME">this.canvas.height</span><span class="WHIT">
+<span class='line'>402</span> </span><span class="WHIT">      </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>403</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">  
+<span class='line'>404</span>     </span><span class="NAME">ctx.restore</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>405</span> 
+<span class='line'>406</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">PFPlay.DEBUG</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">      </span><span class="NAME">ctx.save</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>408</span> </span><span class="WHIT">      </span><span class="NAME">ctx.fillStyle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"#FF3300"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>409</span> </span><span class="WHIT">      </span><span class="NAME">ctx.beginPath</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="WHIT">      </span><span class="NAME">ctx.arc</span><span class="PUNC">(</span><span class="NAME">this.position.x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.position.y</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">3</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Math.PI</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="WHIT">      </span><span class="NAME">ctx.closePath</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>412</span> </span><span class="WHIT">      </span><span class="NAME">ctx.fill</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>413</span> </span><span class="WHIT">      </span><span class="NAME">ctx.restore</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>414</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>415</span> 
+<span class='line'>416</span> </span><span class="WHIT">    </span><span class="NAME">this.updated</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>417</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>418</span> 
+<span class='line'>419</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>420</span>    * Calculates new anchor radius and angle based on the size of the 
+<span class='line'>421</span>    * visual node and anchor position. It will then calculate a new top left
+<span class='line'>422</span>    * position for this node by calculating canvas width and height based on
+<span class='line'>423</span>    * the rotation of this node and position. Lastly, it sets the 
+<span class='line'>424</span>    * width and height of this node's canvas.
+<span class='line'>425</span>    */</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="WHIT">  </span><span class="NAME">calculateProperties</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>427</span> 
+<span class='line'>428</span> </span><span class="WHIT">    </span><span class="COMM">// calculate new anchor radius based on size and scale</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">sw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.size.width</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>430</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">sh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.size.height</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">sx</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">sw</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">sy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">sh</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>432</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ix</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.anchor.x</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">sw</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">iy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.anchor.y</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">sh</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">dx</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ix</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">sx</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">dy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iy</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">sy</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="WHIT">    </span><span class="NAME">this.anchorRadius</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Math.sqrt</span><span class="PUNC">(</span><span class="NAME">dx</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">dx</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">dy</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">dy</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="WHIT">    </span><span class="NAME">this.anchorAngle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Math.atan2</span><span class="PUNC">(</span><span class="NAME">dy</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">dx</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NUMB">180</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">Math.PI</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NUMB">90</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">isNaN</span><span class="PUNC">(</span><span class="NAME">this.anchorAngle</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>437</span> </span><span class="WHIT">     </span><span class="NAME">this.anchorAngle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>439</span> 
+<span class='line'>440</span> </span><span class="WHIT">    </span><span class="COMM">// save previous top left</span><span class="WHIT">
+<span class='line'>441</span> </span><span class="WHIT">    </span><span class="NAME">this.positionTopLeftPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.positionTopLeft</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>442</span> 
+<span class='line'>443</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ox</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.size.width</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.scale.x</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>444</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">oy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.size.height</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.scale.y</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>445</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">xpos</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.position.x</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> 
+<span class='line'>446</span>                </span><span class="NAME">Math.sin</span><span class="PUNC">(</span><span class="NAME">Math.PI</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="PUNC">(</span><span class="NAME">this.rotation</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.anchorAngle</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">180</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> 
+<span class='line'>447</span>                </span><span class="NAME">this.anchorRadius</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">ox</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>448</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ypos</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.position.y</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> 
+<span class='line'>449</span>                </span><span class="NAME">Math.cos</span><span class="PUNC">(</span><span class="NAME">Math.PI</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="PUNC">(</span><span class="NAME">this.rotation</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.anchorAngle</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">180</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> 
+<span class='line'>450</span>                </span><span class="NAME">this.anchorRadius</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">oy</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>451</span> </span><span class="WHIT">    
+<span class='line'>452</span>     </span><span class="NAME">this.positionTopLeft</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>453</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">xpos</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>454</span>       </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">ypos</span><span class="WHIT">
+<span class='line'>455</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>456</span> 
+<span class='line'>457</span> </span><span class="WHIT">    </span><span class="COMM">// update the canvas element</span><span class="WHIT">
+<span class='line'>458</span> </span><span class="WHIT">    </span><span class="NAME">this.canvas.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.size.width</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>459</span> </span><span class="WHIT">    </span><span class="NAME">this.canvas.height</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.size.height</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>460</span> 
+<span class='line'>461</span> </span><span class="WHIT">    </span><span class="COMM">// update the bounds</span><span class="WHIT">
+<span class='line'>462</span> </span><span class="WHIT">    </span><span class="NAME">this.boundsPrevious</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.bounds</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>463</span> </span><span class="WHIT">    </span><span class="NAME">this.bounds</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>464</span> </span><span class="WHIT">      </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.positionTopLeft.x</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>465</span> </span><span class="WHIT">      </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.positionTopLeft.y</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>466</span> </span><span class="WHIT">      </span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.size.width</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.scale.x</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>467</span> </span><span class="WHIT">      </span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.size.height</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.scale.y</span><span class="WHIT">
+<span class='line'>468</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>469</span> 
+<span class='line'>470</span> </span><span class="WHIT">    </span><span class="NAME">this.invalidProperties</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>471</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>472</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

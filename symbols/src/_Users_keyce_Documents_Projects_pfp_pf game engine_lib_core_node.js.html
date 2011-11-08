@@ -1,0 +1,61 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * Copyright 2011 Paranoid Ferret Productions
+<span class='line'>  3</span>  *
+<span class='line'>  4</span>  * The base type for all objects added to the world.
+<span class='line'>  5</span>  * @param {object} [params] parameters that can be set as initialized options
+<span class='line'>  6</span>  * on the node
+<span class='line'>  7</span>  * @config {string} [name] name of the node
+<span class='line'>  8</span>  * @class The base node object.
+<span class='line'>  9</span>  */</span><span class="WHIT">
+<span class='line'> 10</span> 
+<span class='line'> 11</span> </span><span class="NAME">PFPlay.Node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Class.extend</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="COMM">/** @lends PFPlay.Node.prototype */</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="WHIT">  </span><span class="COMM">/** @constructs */</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">  </span><span class="NAME">init</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 16</span> 
+<span class='line'> 17</span> </span><span class="WHIT">    </span><span class="NAME">params</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">PFPlay.util.checkParams</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Node"</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">PFPlay.Node.nodeIdx</span><span class="PUNC">++</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> 
+<span class='line'> 21</span> </span><span class="WHIT">    </span><span class="COMM">// Default the name to something unique.</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">    </span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params.name</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span> 
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 25</span>      * Private properties of the visual node. Should not need or use these.
+<span class='line'> 26</span>      * @type {object}
+<span class='line'> 27</span>      */</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">    </span><span class="NAME">this._private</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 30</span> 
+<span class='line'> 31</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'> 32</span>    * The name of the node.
+<span class='line'> 33</span>    * @type {string}
+<span class='line'> 34</span>    */</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">  </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 36</span> 
+<span class='line'> 37</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'> 38</span>    * Update function called on each loop in the engine
+<span class='line'> 39</span>    * @param {number} elapsed the elapsed time since last call in 
+<span class='line'> 40</span>    * milliseconds
+<span class='line'> 41</span>    */</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">  </span><span class="NAME">update</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">elapsed</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="COMM">// Nothing is updated by default</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">PFPlay.DEBUG</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">      </span><span class="NAME">console.log</span><span class="PUNC">(</span><span class="STRN">"node update"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 48</span> 
+<span class='line'> 49</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> 
+<span class='line'> 51</span> </span><span class="COMM">// Static index that's incremented whenever a node is created.</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="COMM">// Used for uniquely naming nodes if a name is not specified.</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="NAME">PFPlay.Node.nodeIdx</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 54</span> </span></pre></body></html>
