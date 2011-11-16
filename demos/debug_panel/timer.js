@@ -28,7 +28,7 @@ pulse.ready(function() {
   s.position = {x: 320, y: 240};
   world.addNode(s);
   
-  var timer = new pulse.debug.DebugTimer();
+  var timer = new pulse.debug.Timer();
   
   function loop(sm, elapsed)
   {

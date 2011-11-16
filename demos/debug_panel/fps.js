@@ -30,7 +30,7 @@ pulse.ready(function() {
 
   var fpstext = document.getElementById('fpstext');
   
-  var fpstimer = new pulse.debug.DebugFPS();
+  var fpstimer = new pulse.debug.FPS();
   
   function loop(sm, elapsed)
   {

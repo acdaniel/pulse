@@ -28,19 +28,24 @@ pulse.ready(function() {
   s.position = {x: 320, y: 240};
   world.addNode(s);
 
-  var l = new pulse.CanvasLabel();
-  l.anchor = {x : 0, y : 1};
-  l.position = {x : 10, y : 470};
-  l.text = "FPS: 0";
-  world.addNode(l);
-  
-  var counter = new pulse.debug.Counter();
+  // debug stuff
+  var fpstimer = new pulse.debug.FPS();
+  var drawCounter = new pulse.debug.Counter();
+  var nodeCounter = new pulse.debug.Counter();
+  var panel = new pulse.debug.Panel({
+    fpsTimer : fpstimer,
+    drawCounter : drawCounter,
+    nodeCounter : nodeCounter
+  });
+  nodeCounter.count = 2;
   
   function loop(sm, elapsed)
-  {
-    counter.increment();
-    l.text = "Updates: " + counter.count;
+  { 
+    drawCounter.increment();
+    fpstimer.mark();
+    panel.update(elapsed);
   }
-  
+
   engine.go(1000/60, loop);
+  fpstimer.start();
 });

@@ -1,5 +1,5 @@
 pulse.ready(function() {
-  var engine = new pulse.Engine();
+  var engine = new pulse.Engine({debug : true});
   var cybertron = new pulse.Scene({name: 'cybertron'});
   
   var world = new pulse.Layer({name: 'layer', x : 320, y : 240});
@@ -23,24 +23,21 @@ pulse.ready(function() {
 
   var greenTexture = new pulse.Image({src:'../img/green_square.png'});
   var redTexture = new pulse.Image({src:'../img/red_square.png'});
+  var ballTexture = new pulse.Image({src:'../pong/ball.png'});
   
-  var s = new pulse.Sprite({src: greenTexture});
-  s.position = {x: 320, y: 240};
-  world.addNode(s);
+  var b;
+  for(var i = 0; i < 300; i++) {
+    b = new Ball({src : ballTexture});
+    b.position = {
+      x : Math.random() * 640,
+      y : Math.random() * 480
+    }; 
+    world.addNode(b);
+  }
 
-  var l = new pulse.CanvasLabel();
-  l.anchor = {x : 0, y : 1};
-  l.position = {x : 10, y : 470};
-  l.text = "FPS: 0";
-  world.addNode(l);
-  
-  var counter = new pulse.debug.Counter();
-  
   function loop(sm, elapsed)
   {
-    counter.increment();
-    l.text = "Updates: " + counter.count;
   }
-  
+
   engine.go(1000/60, loop);
 });
