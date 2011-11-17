@@ -26,7 +26,7 @@ pulse.ready(function() {
   var ballTexture = new pulse.Image({src:'../pong/ball.png'});
   
   var b;
-  for(var i = 0; i < 300; i++) {
+  for(var i = 0; i < 200; i++) {
     b = new Ball({src : ballTexture});
     b.position = {
       x : Math.random() * 640,
