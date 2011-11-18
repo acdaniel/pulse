@@ -34,7 +34,7 @@ pulse.ready(function() {
     }; 
     world.addNode(b);
   }
-  console.log('test');
+  
   pulse.DebugManager.logWarning('this is a warning');
   pulse.DebugManager.logDebug('this is a bit of info');
   pulse.DebugManager.logError('this is an error!');
